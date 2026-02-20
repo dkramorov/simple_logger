@@ -6,6 +6,9 @@
 -----------
 Для локальной разработки::
     pip install -e packages/simple_logger
+Для обычной установки через requirements.txt::
+    simple_logger @ git+https://github.com/dkramorov/simple_logger.git
+
 
 Импорт
 -----------
