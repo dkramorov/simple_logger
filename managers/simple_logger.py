@@ -6,13 +6,16 @@ class CustomLogger(logging.Logger):
     RESET = "\033[0m"
     BOLD = "\033[1m"
     RED = "\033[31m"
+    BLUE = "\033[34m"
 
     def __init__(self, name: str, level: int = logging.NOTSET):
         super().__init__(name, level)
 
     def info(self, msg, *args, **kwargs):
-        if '[ERROR]' in msg:
+        if msg and msg.startswith('[ERROR]'):
             msg = f'{self.RED}{msg}{self.RESET}'
+        elif msg and msg.startswith('[INFO]'):
+            msg = f'{self.BLUE}{msg}{self.RESET}'
         super().info(msg, *args, **kwargs)
 
 
