@@ -2,6 +2,20 @@ import json
 import logging
 
 
+class CustomLogger(logging.Logger):
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
+    RED = "\033[31m"
+
+    def __init__(self, name: str, level: int = logging.NOTSET):
+        super().__init__(name, level)
+
+    def info(self, msg, *args, **kwargs):
+        if '[ERROR]' in msg:
+            msg = f'{self.RED}{msg}{self.RESET}'
+        super().info(msg, *args, **kwargs)
+
+
 def json_pretty_print(json_obj, pass_fields: list = None, default_deserializator=str):
     """Вывести json в человеческом виде,
        например,
@@ -28,10 +42,12 @@ def create_logger(log_format: str = '%(asctime)s %(message)s'):
        %(lineno)d Source line number where the logging call was issued (if available).
     """
     #log_format = '%(asctime)s [%(filename)s]:[%(funcName)s]:[%(lineno)s] %(message)s'
+    logging.setLoggerClass(CustomLogger)
     logging.basicConfig(format=log_format)
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     #logger.info(__file__)
+
     return logger
 
 
