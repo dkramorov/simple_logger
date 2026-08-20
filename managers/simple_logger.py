@@ -19,7 +19,24 @@ class CustomLogger(logging.Logger):
         super().info(msg, *args, **kwargs)
 
 
-def json_pretty_print(json_obj, pass_fields: list = None, default_deserializator=str):
+def is_not_null_dict(data: dict):
+    """Проверка на то, что хоть одно значение не None в словаре
+       :param data: словарь
+    """
+    not_null = False
+    for k, v in data.items():
+        if isinstance(v, dict):
+            not_null = is_not_null_dict(data=v)
+        elif not v == None:
+            not_null = True
+            break
+    return not_null
+
+
+def json_pretty_print(json_obj,
+                      pass_fields: list = None,
+                      default_deserializator=str,
+                      sort_keys: bool = True):
     """Вывести json в человеческом виде,
        например,
          json.dumps({'test': 2.34}, default_deserializator=str)
@@ -27,12 +44,13 @@ def json_pretty_print(json_obj, pass_fields: list = None, default_deserializator
        :param json_obj: джисонина
        :param pass_fields: пропустить поля (верхний уровень словаря пока)
        :param default_deserializator: функция вызываемая при Object of type X is not JSON serializable
+       :param sort_keys: сортировка ключей (если ключи разных типов, тогда надо отключать)
     """
     if pass_fields and isinstance(json_obj, dict):
         new_json_obj = {k: v for k, v in json_obj.copy().items() if not k in pass_fields}
         return json.dumps(new_json_obj, sort_keys=True, indent=2,
                           separators=(',', ': '), ensure_ascii=False, default=default_deserializator)
-    return json.dumps(json_obj, sort_keys=True, indent=2,
+    return json.dumps(json_obj, sort_keys=sort_keys, indent=2,
                       separators=(',', ': '), ensure_ascii=False, default=default_deserializator)
 
 
